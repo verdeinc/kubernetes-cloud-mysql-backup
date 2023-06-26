@@ -61,6 +61,6 @@ RUN chmod +x /perform-backup.sh
 COPY resources/perform-restore.sh /
 RUN chmod +x /perform-restore.sh
 
-COPY perform-backup.sh /perform-backup.sh
-COPY perform-restore.sh /perform-restore.sh
+COPY resources/perform-backup.sh /perform-backup.sh
+COPY resources/perform-restore.sh /perform-restore.sh
 CMD if [ "$TASK_TYPE" = "backup" ] ; then sh /perform-backup.sh ; else sh /perform-restore.sh ; fi

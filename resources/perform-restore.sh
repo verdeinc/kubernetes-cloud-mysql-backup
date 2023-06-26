@@ -19,7 +19,7 @@ fi
 
 # If the restore_failed flag is still false, perform the restore operation
 if [ "$restore_failed" = false ]; then
-    if mysqloutput=$(mysql -u $TARGET_DATABASE_USER -h $TARGET_DATABASE_HOST -p$TARGET_DATABASE_PASSWORD -P $TARGET_DATABASE_PORT < /tmp/backup.sql 2>&1); then
+    if mysqloutput=$(mysql -u $TARGET_DATABASE_USER -h $TARGET_DATABASE_HOST -p$TARGET_DATABASE_PASSWORD -P $TARGET_DATABASE_PORT $TARGET_DATABASE_NAMES < /tmp/backup.sql 2>&1); then
         echo -e "Database restored successfully from $BACKUP_FILE_NAME at $(date +'%d-%m-%Y %H:%M:%S')."
     else
         echo -e "Database restore FAILED at $(date +'%d-%m-%Y %H:%M:%S'). Error: $mysqloutput"
