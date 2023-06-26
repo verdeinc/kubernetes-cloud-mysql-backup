@@ -51,13 +51,20 @@ if [ "$TARGET_ALL_DATABASES" = "true" ]; then
     fi
 fi
 
-# Loop through all the defined databases, seperating by a ,
+# Loop through all the defined databases, separating by a ,
+IGNORE_TABLE_OPTIONS=""
+
 if [ "$has_failed" = false ]; then
     for CURRENT_DATABASE in ${TARGET_DATABASE_NAMES//,/ }; do
+        if [ ! -z "$IGNORED_TABLES" ]; then
+            for TABLE in $IGNORED_TABLES; do
+                IGNORE_TABLE_OPTIONS+=" --ignore-table=$CURRENT_DATABASE.$TABLE"
+            done
+        fi
 
         DUMP=$CURRENT_DATABASE$(date +$BACKUP_TIMESTAMP).sql
         # Perform the database backup. Put the output to a variable. If successful upload the backup to S3, if unsuccessful print an entry to the console and the log, and set has_failed to true.
-        if sqloutput=$(mysqldump -u $TARGET_DATABASE_USER -h $TARGET_DATABASE_HOST -p$TARGET_DATABASE_PASSWORD -P $TARGET_DATABASE_PORT $BACKUP_ADDITIONAL_PARAMS $BACKUP_CREATE_DATABASE_STATEMENT $CURRENT_DATABASE 2>&1 >/tmp/$DUMP); then
+        if sqloutput=$(mysqldump -u $TARGET_DATABASE_USER -h $TARGET_DATABASE_HOST -p$TARGET_DATABASE_PASSWORD -P $TARGET_DATABASE_PORT $IGNORE_TABLE_OPTIONS $BACKUP_ADDITIONAL_PARAMS $BACKUP_CREATE_DATABASE_STATEMENT $CURRENT_DATABASE 2>&1 >/tmp/$DUMP); then
 
             echo -e "Database backup successfully completed for $CURRENT_DATABASE at $(date +'%d-%m-%Y %H:%M:%S')."
 
