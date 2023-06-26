@@ -56,4 +56,11 @@ RUN chmod +x /slack-alert.sh
 # Copy backup script and execute
 COPY resources/perform-backup.sh /
 RUN chmod +x /perform-backup.sh
-CMD ["sh", "/perform-backup.sh"]
+
+# Copy restore script and execute
+COPY resources/perform-restore.sh /
+RUN chmod +x /perform-restore.sh
+
+COPY perform-backup.sh /perform-backup.sh
+COPY perform-restore.sh /perform-restore.sh
+CMD if [ "$TASK_TYPE" = "backup" ] ; then sh /perform-backup.sh ; else sh /perform-restore.sh ; fi
